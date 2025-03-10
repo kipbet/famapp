@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile | manuu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Simple styling for the profile page */
+    #profile-container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    #profile-form label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #profile-form input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #profile-form button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #profile-form button:hover {
+      background: #0056b3;
+    }
+    #profile-message {
+      margin-top: 10px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User Profile</h1>
+   
+  </header>
+
+  <section id="profile-container">
+    <form id="profile-form">
+      <label>Email:</label>
+      <input type="text" id="profile-email" disabled>
+      
+      <label>Full Name:</label>
+      <input type="text" id="profile-name" placeholder="Enter your full name">
+      
+      <label>Role:</label>
+      <input type="text" id="profile-role" disabled>
+      
+      <button type="submit">Update Profile</button>
+      <p id="profile-message"></p>
+    </form>
+  </section>
+  
+  <!-- Include Firebase libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
+  <script src="profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="styless.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDUYnN3bOTPNHvKHdWwrlACOAnLCAgxiJI",
+            authDomain: "manuu-59b30.firebaseapp.com",
+            projectId: "manuu-59b30",
+            storageBucket: "manuu-59b30.appspot.com",
+            messagingSenderId: "872309397811",
+            appId: "1:872309397811:web:86430ccca5022f63954646",
+            measurementId: "G-CBC53KCBW7"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body>
+<a href="dasfam.html" style="margin-left: 20px; display: flex;">
+  <i class="fas fa-chart-line"></i> Back 
+</a>
+
+    <div class="container">
+        <h1>Manage Products</h1>
+        <form id="product-form">
+            <input type="text" id="product-name" placeholder="Product Name" required>
+            <input type="number" id="product-price" placeholder="Price" required>
+            <input type="file" id="product-image" required>
+            <button type="submit">Add Product</button>
+        </form>
+        <h2>Product List</h2>
+        <div id="product-list"></div>
+        <a href="ordereditems.html">View Products</a>
+    </div>
+    <script>
+        const productList = document.getElementById('product-list');
+
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const imageFile = document.getElementById('product-image').files[0];
+
+            if (!name || !price || !imageFile) {
+                alert('All fields are required!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            formData.append('upload_preset', 'uxrqlhw1');
+
+            try {
+                const response = await axios.post('https://api.cloudinary.com/v1_1/dbbckvmap/image/upload', formData);
+                const imageUrl = response.data.secure_url;
+                await db.collection('products').add({ name, price, image: imageUrl });
+                alert('Product added successfully!');
+                loadProducts();
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        });
+
+        async function loadProducts() {
+            productList.innerHTML = '';
+            const querySnapshot = await db.collection('products').get();
+            querySnapshot.forEach(doc => {
+                const product = doc.data();
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <img src="${product.image}" width="100">
+                    <p><strong>${product.name}</strong> - $${product.price}</p>
+                    <button onclick="editProduct('${doc.id}', '${product.name}', ${product.price}, '${product.image}')">Edit</button>
+                    <button onclick="deleteProduct('${doc.id}')">Delete</button>
+                `;
+                productList.appendChild(div);
+            });
+        }
+
+        async function deleteProduct(id) {
+            await db.collection('products').doc(id).delete();
+            alert('Product deleted successfully!');
+            loadProducts();
+        }
+
+        async function editProduct(id, name, price, image) {
+            const newName = prompt('Enter new name:', name);
+            const newPrice = prompt('Enter new price:', price);
+            if (newName && newPrice) {
+                await db.collection('products').doc(id).update({ name: newName, price: parseFloat(newPrice) });
+                alert('Product updated successfully!');
+                loadProducts();
+            }
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>

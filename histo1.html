@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="styless.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDUYnN3bOTPNHvKHdWwrlACOAnLCAgxiJI",
+            authDomain: "manuu-59b30.firebaseapp.com",
+            projectId: "manuu-59b30",
+            storageBucket: "manuu-59b30.appspot.com",
+            messagingSenderId: "872309397811",
+            appId: "1:872309397811:web:86430ccca5022f63954646",
+            measurementId: "G-CBC53KCBW7"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+</head>
+<body> 
+<a href="dasfam.html" style="margin-left: 20px; display: flex;">
+  <i class="fas fa-chart-line"></i> Back 
+</a>
+
+    <h1>Orders</h1>
+    <a href="dasfam.html">dashboard</a>
+    <div id="orders-list"></div>
+    
+    <script>
+        const ordersList = document.getElementById('orders-list');
+
+        async function loadOrders() {
+            ordersList.innerHTML = '';
+            try {
+                const querySnapshot = await db.collection('orders').orderBy("timestamp", "desc").get();
+                if (querySnapshot.empty) {
+                    ordersList.innerHTML = '<p>No orders found.</p>';
+                    return;
+                }
+                querySnapshot.forEach(doc => {
+                    const order = doc.data();
+                    console.log(order); // Debug: Check if data is fetched
+                    
+                    const div = document.createElement('div');
+                    div.innerHTML = `<h3>Order Total: $${order.total}</h3>`;
+                    
+                    if (order.items && Array.isArray(order.items)) {
+                        order.items.forEach(item => {
+                            div.innerHTML += `
+                                <p>${item.name} - $${item.price}</p>
+                                ${item.image ? `<img src="${item.image}" width="100" alt="${item.name}">` : ''}`;
+                        });
+                    } else {
+                        div.innerHTML += `<p>No items in this order.</p>`;
+                    }
+                    
+                    div.innerHTML += `<button onclick="deleteOrder('${doc.id}')">Remove Order</button>`;
+                    
+                    ordersList.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                ordersList.innerHTML = '<p>Error loading orders. Please try again later.</p>';
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (confirm("Are you sure you want to remove this order?")) {
+                try {
+                    await db.collection("orders").doc(orderId).delete();
+                    alert("Order removed successfully!");
+                    loadOrders();
+                } catch (error) {
+                    console.error("Error removing order:", error);
+                }
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>

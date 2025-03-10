@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #ffe6e6; /* Light pink background */
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #ffb6c1; /* Light pink sidebar */
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align: center;
+        }
+        .sidebar img {
+            width: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px 20px;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+        }
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background: #ff69b4; /* Darker pink hover effect */
+            border-radius: 5px;
+        }
+        .container {
+            margin-left: 260px;
+            padding: 20px;
+            flex-grow: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            width: calc(100% - 260px);
+        }
+        .dashboard-overview {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+        }
+        .card h3 {
+            margin: 10px 0;
+            color: #d1477a; /* Dark pink text for contrast */
+        }
+        .card p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e75480; /* Soft pink text */
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <img src="logo.png" alt="Logo">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="order3.html"><i class="fas fa-box"></i> Manage Products</a></li>
+            <li><a href="sales_report.html"><i class="fas fa-chart-line"></i> Sales Report</a></li>
+            <li><a href="histo1.html"><i class="fas fa-chart-line"></i> view orders</a></li>
+	 <li><a href="profile.html"><i class="fas fa-chart-line"></i>update profile</a></li>
+	 	 	 <li><a href="chatbot.html"><i class="fas fa-chart-line"></i>chatbot</a></li>
+	 	 	 <li><a href="chat.html"><i class="fas fa-chart-line"></i>chat room</a></li>
+
+
+	 <li><a href="login1.html"><i class="fas fa-chart-line"></i>logout</a></li>
+
+        </ul>
+    </div>
+	
+    
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Welcome, Farmer!</h1>
+        <p>Manage your products, track sales, and view customer orders all in one place.</p>
+        
+        <div class="dashboard-overview">
+            <div class="card">
+                <h3><i class="fas fa-seedling"></i> Total Products</h3>
+                <p id="total-products">0</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-truck"></i> Pending Orders</h3>
+                <p id="pending-orders">0</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-dollar-sign"></i> Sales Revenue</h3>
+                <p>$<span id="sales-revenue">0</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simulating data retrieval
+        document.getElementById('total-products').textContent = 25;
+        document.getElementById('pending-orders').textContent = 5;
+        document.getElementById('sales-revenue').textContent = "1,250.00";
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+
+		    <link rel="stylesheet" href="styless.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Firebase Configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyDUYnN3b...",
+            authDomain: "manuu-59b30.firebaseapp.com",
+            projectId: "manuu-59b30",
+            storageBucket: "manuu-59b30.appspot.com",
+            messagingSenderId: "872309397811",
+            appId: "1:872309397811:web:86430ccca5022f63954646",
+            measurementId: "G-CBC53KCBW7"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+</head>
+<body><a href="dasfam.html" style="margin-left: 20px; display: flex;">
+  <i class="fas fa-chart-line"></i> Back 
+</a>
+
+
+    <div class="container">
+
+        <h1>Sales Report</h1>
+        <div class="stats">
+            <div class="card">Total Revenue: <span id="total-revenue">$0</span></div>
+            <div class="card">Total Orders: <span id="total-orders">0</span></div>
+        </div>
+        <h2>Best Selling Products</h2>
+        <ul id="best-selling"></ul>
+        <h2>Sales Over Time</h2>
+        <canvas id="sales-chart"></canvas>
+    </div>
+    <script>
+        async function loadSalesReport() {
+            let totalRevenue = 0;
+            let totalOrders = 0;
+            let productSales = {};
+            let salesData = [];
+            
+            const querySnapshot = await db.collection('orders').orderBy('timestamp').get();
+            querySnapshot.forEach(doc => {
+                const order = doc.data();
+                totalRevenue += order.total;
+                totalOrders++;
+                
+                order.items.forEach(item => {
+                    if (productSales[item.name]) {
+                        productSales[item.name] += item.price;
+                    } else {
+                        productSales[item.name] = item.price;
+                    }
+                });
+                
+                salesData.push({ date: order.timestamp.toDate(), total: order.total });
+            });
+            
+            document.getElementById('total-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('total-orders').textContent = totalOrders;
+            
+            const sortedProducts = Object.entries(productSales).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const bestSellingList = document.getElementById('best-selling');
+            bestSellingList.innerHTML = '';
+            sortedProducts.forEach(([name, total]) => {
+                const li = document.createElement('li');
+                li.textContent = `${name}: $${total.toFixed(2)}`;
+                bestSellingList.appendChild(li);
+            });
+            
+            const ctx = document.getElementById('sales-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: salesData.map(d => d.date.toLocaleDateString()),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: salesData.map(d => d.total),
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                }
+            });
+        }
+        
+        loadSalesReport();
+		
+    </script>
+	
+</body>
+</html>

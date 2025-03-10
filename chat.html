@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat | manuu</title>
+  <link rel="stylesheet" href="styless.css">
+  <style>
+    /* Basic styling for chat page */
+    #chat-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    #messages {
+      border: 1px solid #ddd;
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      background-color: #fafafa;
+    }
+    .message {
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 5px;
+    }
+    #chat-form {
+      display: flex;
+    }
+    #message-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    #chat-form button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    #chat-form button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Chat Room</h1>
+    <nav>
+     
+    </nav>
+  </header>
+  
+  <section id="chat-container">
+    <div id="messages">
+      <!-- Messages will be displayed here -->
+    </div>
+    <form id="chat-form">
+      <input type="text" id="message-input" placeholder="Type your message here" required>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+  
+  <!-- Include Firebase libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
+  <script src="chat.js"></script>
+</body>
+</html>

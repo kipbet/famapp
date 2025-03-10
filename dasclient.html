@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase Configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyDUYnN3bOTPNHvKHdWwrlACOAnLCAgxiJI",
+            authDomain: "manuu-59b30.firebaseapp.com",
+            projectId: "manuu-59b30",
+            storageBucket: "manuu-59b30.appspot.com",
+            messagingSenderId: "872309397811",
+            appId: "1:872309397811:web:86430ccca5022f63954646",
+            measurementId: "G-CBC53KCBW7"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #ecf0f1;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #34495e;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align: center;
+        }
+        .sidebar img {
+            width: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px 20px;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active {
+            background: #16a085;
+            border-radius: 5px;
+        }
+        .container {
+            margin-left: 260px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+            width: 150px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            background: #fff;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="logo1.png" alt="Logo">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="ordereditems.html">Available producs</a></li>
+			  <li><a href="histo.html">My Orders</a></li>
+	 <li><a href="profile.html"><i class="fas fa-chart-line"></i>update profile</a></li>
+	 	 <li><a href="chatbot.html"><i class="fas fa-chart-line"></i>chatbot</a></li>
+	 <li><a href="chat.html"><i class="fas fa-chart-line"></message-box></a></li>
+
+
+	 <li><a href="login1.html"><i class="fas fa-chart-line"></i>logout</a></li>
+
+        </ul>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Client Dashboard</h1>
+        </header>
+        
+        <section id="products">
+            <h2>Available Products</h2>
+            <div id="product-list" class="product-list"></div>
+        </section>
+        
+        <section id="cart">
+            <h2>My Cart</h2>
+            <ul id="cart-list"></ul>
+            <p>Total: $<span id="total">0</span></p>
+            <button onclick="placeOrder()">Place Order</button>
+        </section>
+    </div>
+    
+    <script>
+        const productList = document.getElementById('product-list');
+        let cart = [];
+
+        async function loadProducts() {
+            productList.innerHTML = '';
+            try {
+                const querySnapshot = await db.collection('products').get();
+                querySnapshot.forEach(doc => {
+                    const product = doc.data();
+                    const div = document.createElement('div');
+                    div.classList.add('product-card');
+                    div.innerHTML = `
+                        <img src="${product.image}" width="100">
+                        <p>${product.name} - $${product.price}</p>
+                        <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+                    `;
+                    productList.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error loading products:", error);
+            }
+        }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCart();
+        }
+
+        function updateCart() {
+            let cartList = document.getElementById('cart-list');
+            let total = 0;
+            cartList.innerHTML = '';
+            cart.forEach((product, index) => {
+                let li = document.createElement('li');
+                li.classList.add('cart-item');
+                li.innerHTML = `${product.name} - $${product.price} <button onclick="removeFromCart(${index})">Remove</button>`;
+                cartList.appendChild(li);
+                total += product.price;
+            });
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        async function placeOrder() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            try {
+                await db.collection('orders').add({
+                    items: cart,
+                    total: cart.reduce((sum, item) => sum + item.price, 0),
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert('Order placed successfully!');
+                cart = [];
+                updateCart();
+            } catch (error) {
+                console.error("Error placing order:", error);
+            }
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
